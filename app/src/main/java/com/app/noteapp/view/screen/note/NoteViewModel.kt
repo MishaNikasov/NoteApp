@@ -18,7 +18,7 @@ class NoteViewModel @Inject constructor(
 
     var noteScreenState: MutableState<NoteScreenState> = mutableStateOf(NoteScreenState.Loading)
 
-    private fun loadNote(noteId: String) {
+    private fun loadNote(noteId: Long) {
         noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
             delay(1000)

@@ -16,24 +16,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.domain.model.Note
 import com.app.noteapp.R
+import com.app.noteapp.navigation.Router
+import com.app.noteapp.view.screen.note.NoteScreenType
 import com.app.presentation.widget.Loader
 import com.app.presentation.widget.NoteListItem
 import com.app.util.State
 
 @Composable
-fun MainScreen(
+fun HomeScreen(
+    router: Router,
     homeViewModel: HomeViewModel
 ) {
     val noteListState = homeViewModel.noteList.observeAsState()
     when (val result = noteListState.value) {
         is State.Loading -> { Loader() }
-        is State.Successes -> { MainScreenContent(result.data) }
+        is State.Successes -> {
+            HomeScreenContent(result.data) {
+                router.openNote(NoteScreenType.Edit(it.id))
+            }
+        }
         else -> { }
     }
 }
 
 @Composable
-private fun MainScreenContent(list: List<Note>) {
+private fun HomeScreenContent(
+    list: List<Note>,
+    onItemSelect: (Note) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -57,7 +67,10 @@ private fun MainScreenContent(list: List<Note>) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(list) { note ->
-                    NoteListItem(note = note)
+                    NoteListItem(
+                        note = note,
+                        onClick = { onItemSelect(it) }
+                    )
                 }
             }
         }
