@@ -40,8 +40,8 @@ private fun MainScreenContent(list: List<Note>) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
                 .background(Color.White)
+                .padding(16.dp)
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),

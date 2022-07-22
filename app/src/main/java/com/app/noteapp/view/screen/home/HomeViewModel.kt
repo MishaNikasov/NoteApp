@@ -27,7 +27,6 @@ class HomeViewModel @Inject constructor(
     private fun fetchNoteList() {
         viewModelScope.launch {
             _noteList.postValue(State.loading())
-            delay(1500)
             noteRepository.getNoteList().getResult(
                 successes = { list -> _noteList.postValue(State.successes(list ?: emptyList())) },
                 error = { error -> State.error(error) }
