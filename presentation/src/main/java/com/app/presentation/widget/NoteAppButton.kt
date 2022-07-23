@@ -3,6 +3,7 @@ package com.app.presentation.widget
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,14 +21,14 @@ fun NoteAppButton(
         onClick = btnState.callback,
         shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Green,
+            backgroundColor = MaterialTheme.colors.primary,
         ),
         enabled = btnState !is BtnState.Disabled,
         modifier = modifier
     ) {
         Text(
             text = btnState.text,
-            color = Color.DarkGray
+            color = MaterialTheme.colors.onPrimary
         )
     }
 

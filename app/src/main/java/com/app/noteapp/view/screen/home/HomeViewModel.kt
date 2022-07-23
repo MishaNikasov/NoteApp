@@ -20,11 +20,7 @@ class HomeViewModel @Inject constructor(
     private val _noteList = MutableLiveData<State<List<Note>>>()
     val noteList: LiveData<State<List<Note>>> = _noteList
 
-    init {
-        fetchNoteList()
-    }
-
-    private fun fetchNoteList() {
+    fun fetchNoteList() {
         viewModelScope.launch {
             _noteList.postValue(State.loading())
             noteRepository.getNoteList().getResult(

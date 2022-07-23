@@ -7,8 +7,12 @@ class Router(
     private val navController: NavController
 ) {
 
-    fun openNote(noteScreenType: NoteScreenType) {
-        navController.navigate(Screen.Note.route)
+    fun openNote(noteId: Long?) {
+        navController.navigate(Screen.Note.putArgs(noteId.toString()))
+    }
+
+    fun navigateBack() {
+        navController.navigateUp()
     }
 
 }

@@ -20,11 +20,15 @@ class NoteRepositoryImpl @Inject constructor(
         noteDao.insertAll(noteMapper.mapModel(note))
     }
 
+    override suspend fun updateNote(note: Note) {
+        noteDao.updateNote(noteMapper.mapModel(note))
+    }
+
     override suspend fun deleteNote(id: Long) {
         noteDao.deleteById(id)
     }
 
-    override suspend fun findNote(id: Long): Note {
+    override suspend fun getNote(id: Long): Note {
         return noteMapper.mapEntity(noteDao.findById(id))
     }
 

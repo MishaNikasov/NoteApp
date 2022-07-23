@@ -2,11 +2,11 @@ package com.app.presentation.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,13 +27,14 @@ fun NoteListItem(
 ) {
     Card(
         onClick = { onClick(note) },
-        shape = RoundedCornerShape(4.dp),
-        elevation = 3.dp
+        shape = RoundedCornerShape(8.dp),
+        elevation = 5.dp,
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = modifier
+                .heightIn(max = 100.dp)
                 .padding(12.dp)
-                .fillMaxWidth()
         ) {
             Text(
                 text = note.title,
@@ -54,12 +55,12 @@ fun NoteListItem(
 @Preview
 @Composable
 fun NoteListItemPreview() {
-//    NoteListItem(
-//        note = Note(
-//            id = "123",
-//            title = "Title",
-//            text = "Qwqe ewqeqw ewqe qwe wq eqw e qw eqw ew",
-//            date = Date()
-//        )
-//    )
+    NoteListItem(
+        note = Note(
+            id = 12,
+            title = "Title",
+            text = "Qwqe ewqeqw ewqe qwe wq eqw e qw eqw ew",
+            createDate = Date()
+        )
+    )
 }

@@ -21,20 +21,13 @@ class NoteViewModel @Inject constructor(
     private fun loadNote(noteId: Long) {
         noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
-            delay(1000)
-            noteScreenState.value = NoteScreenState.Edit(
-                Note(
-                    id = 0,
-                    title = "Title",
-                    text = "Qwqe ewqeqw ewqe qwe wq eqw e qw eqw ew",
-                    createDate = Date(),
-                    editDate = Date()
-                )
-            )
+            val note = noteRepository.getNote(noteId)
+            noteScreenState.value = NoteScreenState.Edit(note)
         }
     }
 
     fun createNote(title: String, text: String) {
+        noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
             noteRepository.insertNote(
                 Note(
@@ -44,20 +37,34 @@ class NoteViewModel @Inject constructor(
                     createDate = Date()
                 )
             )
+            noteScreenState.value = NoteScreenState.NoteUpdated
         }
     }
 
-    fun updateNote(title: String, text: String, id: Long) {
+    fun updateNote(title: String, text: String, note: Note) {
+        noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
-
+            delay(1400)
+            noteRepository.updateNote(
+                note.copy(
+                    title = title,
+                    text = text
+                )
+            )
+            noteScreenState.value = NoteScreenState.NoteUpdated
         }
     }
 
-    fun handleNoteState(noteScreenType: NoteScreenType) {
-        when(noteScreenType) {
-            NoteScreenType.Create -> { noteScreenState.value = NoteScreenState.Create }
-            is NoteScreenType.Edit -> { loadNote(noteScreenType.noteId) }
+    fun handleNoteState(noteId: Long?) {
+        if(noteId != null) {
+            loadNote(noteId)
+        } else {
+            noteScreenState.value = NoteScreenState.Create
         }
+//        when(noteId) {
+//            NoteScreenType.Create -> { noteScreenState.value = NoteScreenState.Create }
+//            is NoteScreenType.Edit -> { loadNote(noteScreenType.noteId) }
+//        }
     }
 
 }

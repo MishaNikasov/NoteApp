@@ -13,9 +13,7 @@ import com.app.noteapp.navigation.Router
 import com.app.noteapp.navigation.Screen
 import com.app.noteapp.view.screen.home.HomeScreen
 import com.app.noteapp.view.screen.note.NoteScreen
-import com.app.noteapp.view.screen.note.NoteScreenState
-import com.app.noteapp.view.screen.note.NoteScreenType
-import com.app.noteapp.view.theme.ComposeTestTheme
+import com.app.presentation.theme.NoteAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,15 +24,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val router = Router(navController)
-            ComposeTestTheme {
+            NoteAppTheme {
                 NavHost(navController = navController, startDestination = Screen.Home.route ) {
-                    composable(Screen.Home.route) { HomeScreen(router = router, homeViewModel = hiltViewModel()) }
+                    composable(Screen.Home.routeWithArgs) { HomeScreen(router = router, homeViewModel = hiltViewModel()) }
                     composable(
-                        route = Screen.Note.route,
-                        arguments = listOf(navArgument("noteScreenState") { type = NavType.StringType })
+                        route = Screen.Note.routeWithArgs,
+                        arguments = listOf(navArgument("noteId") {
+                            nullable = true
+                            defaultValue = null
+                            type = NavType.StringType }
+                        )
                     ) { backStackEntry ->
-                        val screenType = backStackEntry.arguments?.getString("noteScreenState")
-                        NoteScreen(router = router, noteViewModel = hiltViewModel(), NoteScreenType.Create)
+                        val noteId = backStackEntry.arguments?.getString("noteId")?.toLongOrNull()
+                        NoteScreen(router = router, noteViewModel = hiltViewModel(), noteId)
                     }
                 }
             }
