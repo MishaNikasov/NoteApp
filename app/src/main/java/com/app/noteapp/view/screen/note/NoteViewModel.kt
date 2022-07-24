@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.app.domain.model.Note
 import com.app.domain.repository.NoteRepository
+import com.app.util.EventHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,9 +15,26 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository
-): ViewModel() {
+): ViewModel(), EventHandler<NoteScreenEvent> {
 
     var noteScreenState: MutableState<NoteScreenState> = mutableStateOf(NoteScreenState.Loading)
+
+    override fun obtainEvent(event: NoteScreenEvent) {
+        when(event) {
+            is NoteScreenEvent.HandleNoteState -> handleNoteState(event.noteId)
+            is NoteScreenEvent.CreateNote -> createNote(event.title, event.text)
+            is NoteScreenEvent.UpdateNote -> updateNote(event.title, event.text, event.note)
+            is NoteScreenEvent.DeleteNote -> deleteNote(event.note)
+        }
+    }
+
+    private fun handleNoteState(noteId: Long?) {
+        if(noteId != null) {
+            loadNote(noteId)
+        } else {
+            noteScreenState.value = NoteScreenState.Create
+        }
+    }
 
     private fun loadNote(noteId: Long) {
         noteScreenState.value = NoteScreenState.Loading
@@ -26,7 +44,7 @@ class NoteViewModel @Inject constructor(
         }
     }
 
-    fun createNote(title: String, text: String) {
+    private fun createNote(title: String, text: String) {
         noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
             noteRepository.insertNote(
@@ -41,10 +59,9 @@ class NoteViewModel @Inject constructor(
         }
     }
 
-    fun updateNote(title: String, text: String, note: Note) {
+    private fun updateNote(title: String, text: String, note: Note) {
         noteScreenState.value = NoteScreenState.Loading
         viewModelScope.launch {
-            delay(1400)
             noteRepository.updateNote(
                 note.copy(
                     title = title,
@@ -55,16 +72,12 @@ class NoteViewModel @Inject constructor(
         }
     }
 
-    fun handleNoteState(noteId: Long?) {
-        if(noteId != null) {
-            loadNote(noteId)
-        } else {
-            noteScreenState.value = NoteScreenState.Create
+    private fun deleteNote(note: Note) {
+        noteScreenState.value = NoteScreenState.Loading
+        viewModelScope.launch {
+            noteRepository.deleteNote(note.id)
+            noteScreenState.value = NoteScreenState.NoteUpdated
         }
-//        when(noteId) {
-//            NoteScreenType.Create -> { noteScreenState.value = NoteScreenState.Create }
-//            is NoteScreenType.Edit -> { loadNote(noteScreenType.noteId) }
-//        }
     }
 
 }

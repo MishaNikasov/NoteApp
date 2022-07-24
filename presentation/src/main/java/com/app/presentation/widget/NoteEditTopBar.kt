@@ -20,7 +20,10 @@ import com.app.presentation.theme.NoteAppTheme
 
 @Composable
 fun NoteEditTopBar(
-    modifier: Modifier = Modifier
+    onCloseClick: () -> Unit,
+    onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDeleteClick: (() -> Unit)? = null
 ) {
     Row(
         horizontalArrangement = Arrangement.End,
@@ -40,10 +43,9 @@ fun NoteEditTopBar(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false)
-                ) {
-
-                }
+                ) { onCloseClick() }
         )
+        Spacer(modifier = Modifier.weight(1F))
         Image(
             painter = painterResource(id = R.drawable.ic_check),
             colorFilter = ColorFilter.tint(MaterialTheme.colors.primary),
@@ -54,10 +56,23 @@ fun NoteEditTopBar(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false)
-                ) {
-
-                }
+                ) { onDoneClick() }
         )
+        onDeleteClick?.let {
+            Image(
+                painter = painterResource(id = R.drawable.ic_delete),
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.primary),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier
+                    .height(24.dp)
+                    .padding(start = 12.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(bounded = false)
+                    ) { onDeleteClick() }
+            )
+        }
     }
 }
 
@@ -65,6 +80,6 @@ fun NoteEditTopBar(
 @Composable
 fun NoteEditTopBarPreview() {
     NoteAppTheme {
-        NoteEditTopBar()
+        NoteEditTopBar({},{})
     }
 }

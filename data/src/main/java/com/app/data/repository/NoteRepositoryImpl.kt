@@ -13,7 +13,9 @@ class NoteRepositoryImpl @Inject constructor(
 ): NoteRepository {
 
     override suspend fun getNoteList(): DataState<List<Note>> {
-        return DataState.successes(noteMapper.mapEntityList(noteDao.getAll()))
+        return DataState.successes(
+            noteMapper.mapEntityList(noteDao.getAll()).sortedByDescending { it.createDate }
+        )
     }
 
     override suspend fun insertNote(note: Note) {

@@ -18,22 +18,64 @@ import androidx.compose.ui.unit.dp
 import com.app.presentation.R
 import com.app.presentation.theme.NoteAppTheme
 
+enum class ListArrangement {
+    List, Grid
+}
+
 @Composable
-fun SearchBar(
+fun HomeScreenTopBar(
+    listArrangement: ListArrangement,
+    onSearch: (String) -> Unit,
+    onListArrangementSwap: (ListArrangement) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
+    var listArrangementState by remember { mutableStateOf(listArrangement) }
     var editFieldVisibilityState by remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .height(56.dp)
             .padding(horizontal = 12.dp)
             .fillMaxWidth()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_search),
+            painter = painterResource(
+                id =
+                if (listArrangementState == ListArrangement.Grid)
+                    R.drawable.ic_view_list
+                else
+                    R.drawable.ic_view_grid
+            ),
+            colorFilter = ColorFilter.tint(MaterialTheme.colors.primary),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier
+                .height(24.dp)
+                .align(Alignment.CenterVertically)
+                .padding(end = 12.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = false)
+                ) {
+                    listArrangementState =
+                        if (listArrangementState == ListArrangement.List)
+                            ListArrangement.Grid
+                        else
+                            ListArrangement.List
+                    onListArrangementSwap(listArrangementState)
+                }
+        )
+        Image(
+            painter = painterResource(
+                id =
+                if (editFieldVisibilityState)
+                    R.drawable.ic_close
+                else
+                    R.drawable.ic_search
+            ),
             colorFilter = ColorFilter.tint(MaterialTheme.colors.primary),
             contentScale = ContentScale.Crop,
             contentDescription = null,
@@ -50,8 +92,9 @@ fun SearchBar(
         AnimatedVisibility(visible = editFieldVisibilityState) {
             NoteAppTextField(
                 value = "",
-                onValueChange = {},
+                onValueChange = { onSearch(it) },
                 placeholderText = "Search",
+                requestFocus = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
@@ -59,11 +102,10 @@ fun SearchBar(
         }
     }
 }
-
 @Preview
 @Composable
-fun SearchBarPreview() {
+fun HomeScreenTopBarPreview() {
     NoteAppTheme {
-        SearchBar()
+        HomeScreenTopBar(ListArrangement.List, {}, {})
     }
 }

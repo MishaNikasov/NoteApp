@@ -9,12 +9,4 @@ sealed class NoteScreenState {
     object NoteUpdated: NoteScreenState()
     data class Edit(val note: Note): NoteScreenState()
 
-    val btnText: String
-        get() {
-            return when(this) {
-                Create -> "Create"
-                is Edit -> "Edit"
-                else -> ""
-            }
-        }
 }
