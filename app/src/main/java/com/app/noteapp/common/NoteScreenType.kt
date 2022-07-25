@@ -1,4 +1,4 @@
-package com.app.noteapp.view.screen.note
+package com.app.noteapp.common
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

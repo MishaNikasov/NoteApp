@@ -1,10 +1,9 @@
 package com.app.noteapp.view.screen.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.domain.model.Note
 import com.app.domain.repository.NoteRepository
 import com.app.util.EventHandler
 import com.app.util.State
@@ -17,8 +16,7 @@ class HomeViewModel @Inject constructor(
     private val noteRepository: NoteRepository
 ) : ViewModel(), EventHandler<HomeScreenEvent> {
 
-    private val _noteList = MutableLiveData<State<List<Note>>>()
-    val noteList: LiveData<State<List<Note>>> = _noteList
+    var homeViewState: MutableState<HomeViewState> = mutableStateOf(HomeViewState.Loading)
 
     override fun obtainEvent(event: HomeScreenEvent) {
         when (event) {
@@ -28,10 +26,18 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchNoteList() {
         viewModelScope.launch {
-            _noteList.postValue(State.loading())
+            homeViewState.value = HomeViewState.Loading
             noteRepository.getNoteList().getResult(
-                successes = { list -> _noteList.postValue(State.successes(list ?: emptyList())) },
-                error = { error -> State.error(error) }
+                successes = { list ->
+                    if (list.isNullOrEmpty()) {
+                        homeViewState.value = HomeViewState.EmptyContent
+                    } else {
+                        homeViewState.value = HomeViewState.ShowContent(list)
+                    }
+                },
+                error = { error ->
+                    State.error(error)
+                }
             )
         }
     }

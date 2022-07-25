@@ -1,4 +1,4 @@
-package com.app.presentation.widget
+package com.app.noteapp.view.screen.note.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,7 +19,7 @@ import com.app.presentation.R
 import com.app.presentation.theme.NoteAppTheme
 
 @Composable
-fun NoteEditTopBar(
+fun NoteScreenTopBar(
     onCloseClick: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -80,6 +80,6 @@ fun NoteEditTopBar(
 @Composable
 fun NoteEditTopBarPreview() {
     NoteAppTheme {
-        NoteEditTopBar({},{})
+        NoteScreenTopBar({},{})
     }
 }

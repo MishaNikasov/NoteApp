@@ -1,4 +1,4 @@
-package com.app.presentation.widget
+package com.app.noteapp.view.screen.home.view
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.app.presentation.R
 import com.app.presentation.theme.NoteAppTheme
+import com.app.presentation.widget.NoteAppTextField
 
 enum class ListArrangement {
     List, Grid
@@ -102,6 +103,7 @@ fun HomeScreenTopBar(
         }
     }
 }
+
 @Preview
 @Composable
 fun HomeScreenTopBarPreview() {
