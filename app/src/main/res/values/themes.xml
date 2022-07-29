@@ -4,4 +4,11 @@
     <style name="Theme.NoteApp" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/purple_700</item>
     </style>
+
+    <style name="Theme.NoteApp.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/purple_200</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_check</item>
+        <item name="postSplashScreenTheme">@style/Theme.NoteApp</item>
+    </style>
+
 </resources>

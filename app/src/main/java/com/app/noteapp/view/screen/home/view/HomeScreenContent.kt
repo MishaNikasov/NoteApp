@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.app.domain.model.ListArrangement
 import com.app.domain.model.Note
 import com.app.noteapp.R
 import com.app.presentation.theme.NoteAppTheme
@@ -33,17 +34,22 @@ fun HomeScreenContent(
     list: List<Note>,
     onItemSelect: (Note) -> Unit,
     onItemCreate: () -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    listArrangement: ListArrangement,
+    onListArrangementChange: (ListArrangement) -> Unit
 ) {
 
-    var listArrangementState by remember { mutableStateOf(ListArrangement.List) }
+    var listArrangementState by remember { mutableStateOf(listArrangement) }
 
     Scaffold(
         topBar = {
             HomeScreenTopBar(
                 listArrangement = ListArrangement.List,
                 onSearch = onSearch,
-                onListArrangementSwap = { state -> listArrangementState = state },
+                onListArrangementChange = { state ->
+                    listArrangementState = state
+                    onListArrangementChange(state)
+                },
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -150,7 +156,7 @@ fun HomeScreenContentPreview() {
                     createDate = Date(),
                     editDate = Date()
                 )
-            ), {}, {}, {}
-        )
+            ), {}, {}, {}, ListArrangement.List
+        ) { }
     }
 }

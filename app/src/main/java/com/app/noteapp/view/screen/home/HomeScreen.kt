@@ -22,7 +22,9 @@ fun HomeScreen(
             list = (homeViewState as HomeViewState.ShowContent).content,
             onItemSelect = { router.openNote(it.id) },
             onItemCreate = { router.openNote(null) },
-            onSearch = { }
+            onSearch = { },
+            listArrangement = (homeViewState as HomeViewState.ShowContent).listArrangement,
+            onListArrangementChange = { state -> HomeScreenEvent.ChangeListArrangement(state)}
         )
     }
 

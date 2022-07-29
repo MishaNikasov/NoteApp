@@ -15,19 +15,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.app.domain.model.ListArrangement
 import com.app.presentation.R
 import com.app.presentation.theme.NoteAppTheme
 import com.app.presentation.widget.NoteAppTextField
-
-enum class ListArrangement {
-    List, Grid
-}
 
 @Composable
 fun HomeScreenTopBar(
     listArrangement: ListArrangement,
     onSearch: (String) -> Unit,
-    onListArrangementSwap: (ListArrangement) -> Unit,
+    onListArrangementChange: (ListArrangement) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -66,7 +63,7 @@ fun HomeScreenTopBar(
                             ListArrangement.Grid
                         else
                             ListArrangement.List
-                    onListArrangementSwap(listArrangementState)
+                    onListArrangementChange(listArrangementState)
                 }
         )
         Image(

@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.data.storage.AppStorage
+import com.app.domain.model.ListArrangement
 import com.app.domain.repository.NoteRepository
 import com.app.util.EventHandler
 import com.app.util.State
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val appStorage: AppStorage
 ) : ViewModel(), EventHandler<HomeScreenEvent> {
 
     var homeViewState: MutableState<HomeViewState> = mutableStateOf(HomeViewState.Loading)
@@ -21,6 +24,7 @@ class HomeViewModel @Inject constructor(
     override fun obtainEvent(event: HomeScreenEvent) {
         when (event) {
             HomeScreenEvent.FetchNotes -> fetchNoteList()
+            is HomeScreenEvent.ChangeListArrangement -> updateListArrangement(event.listArrangement)
         }
     }
 
@@ -32,13 +36,19 @@ class HomeViewModel @Inject constructor(
                     if (list.isNullOrEmpty()) {
                         homeViewState.value = HomeViewState.EmptyContent
                     } else {
-                        homeViewState.value = HomeViewState.ShowContent(list)
+                        homeViewState.value = HomeViewState.ShowContent(list, appStorage.getListArrangement())
                     }
                 },
                 error = { error ->
                     State.error(error)
                 }
             )
+        }
+    }
+
+    private fun updateListArrangement(listArrangement: ListArrangement) {
+        viewModelScope.launch {
+            appStorage.updateListArrangement(listArrangement)
         }
     }
 
