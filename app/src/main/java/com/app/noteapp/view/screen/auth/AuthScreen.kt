@@ -1,15 +1,17 @@
 package com.app.noteapp.view.screen.auth
 
 import android.app.Activity
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.app.noteapp.navigation.Router
 import com.app.noteapp.view.screen.auth.view.AuthScreenContent
 import com.app.noteapp.common.FirebaseAuthManager
+import com.app.noteapp.view.screen.auth.model.AuthScreenEvent
+import com.app.noteapp.view.screen.auth.model.AuthViewState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 @Composable
@@ -18,7 +20,7 @@ fun AuthScreen(
     authViewModel: AuthViewModel
 ) {
 
-    val authViewState by remember { authViewModel.authViewState }
+    val authViewState = authViewModel.authViewState.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -36,19 +38,23 @@ fun AuthScreen(
         }
     )
 
-    when(authViewState) {
+    Log.d("AuthScreen", "AuthScreen: ${authViewState.value}")
+
+    when(authViewState.value) {
         AuthViewState.Error -> {}
         AuthViewState.Loading -> {}
         AuthViewState.Default -> {
             val client = FirebaseAuthManager.getClient(LocalContext.current as Activity)
             AuthScreenContent(
-                onSignInClick = { launcher.launch(client.signInIntent) }
+                onSignInClick = {
+                    launcher.launch(client.signInIntent)
+                }
             )
         }
         is AuthViewState.AuthSuccesses -> {
-            FirebaseAuthManager.firebaseAuthWithGoogle((authViewState as AuthViewState.AuthSuccesses).userToken)
-            router.clearBackStack()
-            router.openHome()
+            LaunchedEffect(true) {
+                router.openHome()
+            }
         }
     }
 

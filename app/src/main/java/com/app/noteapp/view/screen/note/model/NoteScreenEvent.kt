@@ -1,4 +1,4 @@
-package com.app.noteapp.view.screen.note
+package com.app.noteapp.view.screen.note.model
 
 import com.app.domain.model.Note
 

@@ -39,7 +39,7 @@ class Router(
 
     fun clearBackStack() = navController.popBackStack()
 
-    fun openNote(noteId: Long?) = navController.navigate(Screen.Note.putArgs(noteId.toString()))
+    fun openNote(noteId: Long? = null) = navController.navigate(Screen.Note.putArgs(noteId.toString()))
 
     fun openHome() = navController.navigate(Screen.Home.route)
 

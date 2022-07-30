@@ -1,10 +1,9 @@
 package com.app.noteapp.view.screen.home
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import com.app.noteapp.navigation.Router
+import com.app.noteapp.view.screen.home.model.HomeScreenEvent
+import com.app.noteapp.view.screen.home.model.HomeViewState
 import com.app.noteapp.view.screen.home.view.HomeScreenContent
 import com.app.presentation.widget.Loader
 
@@ -13,18 +12,31 @@ fun HomeScreen(
     router: Router,
     homeViewModel: HomeViewModel
 ) {
-    val homeViewState by remember { homeViewModel.homeViewState }
+    val homeViewState by homeViewModel.homeViewState
 
     when (homeViewState) {
-        HomeViewState.EmptyContent -> Loader()
         HomeViewState.Loading -> Loader()
-        is HomeViewState.ShowContent -> HomeScreenContent(
-            list = (homeViewState as HomeViewState.ShowContent).content,
+        is HomeViewState.EmptyContent -> HomeScreenContent(
+            list = emptyList(),
+            onItemCreate = { router.openNote(null) },
+            listArrangement = (homeViewState as HomeViewState.EmptyContent).listArrangement,
+            onListArrangementChange = { state ->
+                homeViewModel.obtainEvent(HomeScreenEvent.ChangeListArrangement(state))
+            },
+            onItemSelect = {},
+            onSearch = {}
+        )
+        is HomeViewState.NoteListContent -> HomeScreenContent(
+            list = (homeViewState as HomeViewState.NoteListContent).content,
             onItemSelect = { router.openNote(it.id) },
             onItemCreate = { router.openNote(null) },
-            onSearch = { },
-            listArrangement = (homeViewState as HomeViewState.ShowContent).listArrangement,
-            onListArrangementChange = { state -> HomeScreenEvent.ChangeListArrangement(state)}
+            listArrangement = (homeViewState as HomeViewState.NoteListContent).listArrangement,
+            onListArrangementChange = { state ->
+                homeViewModel.obtainEvent(HomeScreenEvent.ChangeListArrangement(state))
+            },
+            onSearch = { query ->
+                homeViewModel.obtainEvent(HomeScreenEvent.SearchNotes(query))
+            }
         )
     }
 

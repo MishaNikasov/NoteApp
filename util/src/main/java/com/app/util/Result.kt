@@ -1,11 +1,11 @@
 package com.app.util
 
-sealed class State<out T> {
+sealed class Result<out T> {
 
-    class Loading<out T>(val data: T?) : State<T>()
-    data class Successes<out T>(val data: T) : State<T>()
-    data class Error(val errorModel: ErrorModel) : State<Nothing>()
-    object Empty : State<Nothing>()
+    class Loading<out T>(val data: T?) : Result<T>()
+    data class Successes<out T>(val data: T) : Result<T>()
+    data class Error(val errorModel: ErrorModel) : Result<Nothing>()
+    object Empty : Result<Nothing>()
 
     companion object {
         fun <T> loading(data: T? = null) = Loading(data)

@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.app.domain.model.Note
 import com.app.domain.repository.NoteRepository
+import com.app.noteapp.view.screen.note.model.NoteScreenEvent
+import com.app.noteapp.view.screen.note.model.NoteViewState
 import com.app.util.EventHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

@@ -10,8 +10,8 @@ sealed class DataState<out R> {
     }
 
     fun toState() = when (this) {
-        is Success -> State.successes(this.data)
-        is Error -> State.error(this.errorModel)
+        is Success -> Result.successes(this.data)
+        is Error -> Result.error(this.errorModel)
     }
 
     suspend fun getResult(

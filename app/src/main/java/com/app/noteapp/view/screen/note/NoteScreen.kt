@@ -3,8 +3,9 @@ package com.app.noteapp.view.screen.note
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import com.app.noteapp.navigation.Router
+import com.app.noteapp.view.screen.note.model.NoteScreenEvent
+import com.app.noteapp.view.screen.note.model.NoteViewState
 import com.app.noteapp.view.screen.note.view.NoteScreenContent
 import com.app.presentation.widget.Loader
 import java.util.*
@@ -15,7 +16,7 @@ fun NoteScreen(
     noteViewModel: NoteViewModel,
     noteId: Long?
 ) {
-    val noteViewState by remember { noteViewModel.noteViewState }
+    val noteViewState by noteViewModel.noteViewState
 
     when (noteViewState) {
         NoteViewState.Loading -> Loader()

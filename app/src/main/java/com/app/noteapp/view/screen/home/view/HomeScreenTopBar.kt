@@ -25,7 +25,8 @@ fun HomeScreenTopBar(
     listArrangement: ListArrangement,
     onSearch: (String) -> Unit,
     onListArrangementChange: (ListArrangement) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enable: Boolean = true
 ) {
 
     var listArrangementState by remember { mutableStateOf(listArrangement) }
