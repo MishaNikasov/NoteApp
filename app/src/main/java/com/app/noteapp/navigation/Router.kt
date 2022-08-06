@@ -20,7 +20,7 @@ class Router(
     fun NoteAppNavHost() {
         NavHost(navController = navController, startDestination = startDestination.route ) {
             composable(Screen.Auth.routeWithArgs) { AuthScreen(router = this@Router, authViewModel = hiltViewModel()) }
-            composable(Screen.Home.routeWithArgs) { HomeScreen(router = this@Router, homeViewModel = hiltViewModel()) }
+            composable(Screen.Home.routeWithArgs) { HomeScreen(router = this@Router, viewModel = hiltViewModel()) }
             composable(
                 route = Screen.Note.routeWithArgs,
                 arguments = listOf(navArgument("noteId") {

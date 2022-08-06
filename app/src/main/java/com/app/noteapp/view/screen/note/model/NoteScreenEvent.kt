@@ -1,8 +1,9 @@
 package com.app.noteapp.view.screen.note.model
 
 import com.app.domain.model.Note
+import com.app.util.ScreenEvent
 
-sealed class NoteScreenEvent {
+sealed class NoteScreenEvent: ScreenEvent {
     data class HandleNoteState(val noteId: Long?): NoteScreenEvent()
     data class CreateNote(val title: String, val text: String): NoteScreenEvent()
     data class DeleteNote(val note: Note): NoteScreenEvent()

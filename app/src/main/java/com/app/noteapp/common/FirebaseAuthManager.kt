@@ -7,6 +7,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
+//ui layer (implement util) -> firebase util (api firebase)
+
 object FirebaseAuthManager {
 
     fun getClient(activity: Activity): GoogleSignInClient {

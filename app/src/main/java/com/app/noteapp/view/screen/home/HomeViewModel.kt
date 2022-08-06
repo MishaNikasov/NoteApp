@@ -1,8 +1,5 @@
 package com.app.noteapp.view.screen.home
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.data.storage.AppStorage
@@ -12,9 +9,11 @@ import com.app.domain.repository.NoteRepository
 import com.app.noteapp.view.screen.home.model.HomeScreenEvent
 import com.app.noteapp.view.screen.home.model.HomeViewState
 import com.app.util.EventHandler
-import com.app.util.Result
+import com.app.util.ViewState
 import com.app.util.invalidEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,36 +23,44 @@ class HomeViewModel @Inject constructor(
     private val appStorage: AppStorage
 ) : ViewModel(), EventHandler<HomeScreenEvent> {
 
-    private val _homeViewState: MutableState<HomeViewState> = mutableStateOf(HomeViewState.Loading)
-    val homeViewState: State<HomeViewState> = _homeViewState
+    private val _homeViewState: MutableStateFlow<ViewState<HomeViewState>> = MutableStateFlow(ViewState.loading())
+    val homeViewState: StateFlow<ViewState<HomeViewState>> = _homeViewState
 
     override fun obtainEvent(event: HomeScreenEvent) {
-        when(val state = _homeViewState.value) {
-            is HomeViewState.Loading -> reduce(state, event)
-            is HomeViewState.EmptyContent -> reduce(state, event)
-            is HomeViewState.NoteListContent -> reduce(state, event)
+        when (val result = _homeViewState.value) {
+            is ViewState.Loading -> reduce(result, event)
+            is ViewState.Successes -> reduce(result, event)
+            is ViewState.Error -> reduce(result, event)
+            is ViewState.Empty -> reduce(result, event)
         }
     }
 
-    private fun reduce(state: HomeViewState.Loading, event: HomeScreenEvent) {
+    private fun reduce(viewState: ViewState.Error, event: HomeScreenEvent) {
         when (event) {
             HomeScreenEvent.FetchNotes -> fetchNoteList()
-            else -> invalidEvent(event, state)
+            else -> invalidEvent(event, viewState)
         }
     }
 
-    private fun reduce(state: HomeViewState.EmptyContent, event: HomeScreenEvent) {
+    private fun reduce(viewState: ViewState.Empty, event: HomeScreenEvent) {
         when (event) {
             HomeScreenEvent.FetchNotes -> fetchNoteList()
             is HomeScreenEvent.ChangeListArrangement -> updateListArrangement(event.listArrangement)
-            else -> invalidEvent(event, state)
+            else -> invalidEvent(event, viewState)
         }
     }
 
-    private fun reduce(state: HomeViewState.NoteListContent, event: HomeScreenEvent) {
+    private fun reduce(viewState: ViewState.Loading<HomeViewState>, event: HomeScreenEvent) {
         when (event) {
             HomeScreenEvent.FetchNotes -> fetchNoteList()
-            is HomeScreenEvent.SearchNotes -> searchNotes(event.query, state.listArrangement)
+            else -> invalidEvent(event, viewState)
+        }
+    }
+
+    private fun reduce(viewState: ViewState.Successes<HomeViewState>, event: HomeScreenEvent) {
+        when (event) {
+            HomeScreenEvent.FetchNotes -> fetchNoteList()
+            is HomeScreenEvent.SearchNotes -> searchNotes(event.query, viewState.data.listArrangement)
             is HomeScreenEvent.ChangeListArrangement -> updateListArrangement(event.listArrangement)
         }
     }
@@ -62,20 +69,20 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getNotes { list ->
                 val resultList = list.filter { it.text.contains(query) || it.title.contains(query) }
-                _homeViewState.value = HomeViewState.NoteListContent(resultList, listArrangement)
+                _homeViewState.value = ViewState.successes(HomeViewState(resultList, listArrangement))
             }
         }
     }
 
     private fun fetchNoteList() {
         viewModelScope.launch {
-            _homeViewState.value = HomeViewState.Loading
+            _homeViewState.value = ViewState.loading()
             val listArrangement = appStorage.getListArrangement()
             getNotes { list ->
                 if (list.isEmpty()) {
-                    _homeViewState.value = HomeViewState.EmptyContent(listArrangement)
+                    _homeViewState.value = ViewState.successes(HomeViewState(emptyList(), listArrangement))
                 } else {
-                    _homeViewState.value = HomeViewState.NoteListContent(list, listArrangement)
+                    _homeViewState.value = ViewState.successes(HomeViewState(list, listArrangement))
                 }
             }
         }
@@ -84,7 +91,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun getNotes(result: (List<Note>) -> Unit) {
         noteRepository.getNoteList().getResult(
             successes = { list -> result(list ?: emptyList()) },
-            error = { error -> Result.error(error) }
+            error = { error -> ViewState.error(error) }
         )
     }
 

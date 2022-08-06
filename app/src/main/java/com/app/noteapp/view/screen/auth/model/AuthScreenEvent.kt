@@ -1,5 +1,7 @@
 package com.app.noteapp.view.screen.auth.model
 
-sealed class AuthScreenEvent {
+import com.app.util.ScreenEvent
+
+sealed class AuthScreenEvent: ScreenEvent {
     data class Auth(val userToken: String): AuthScreenEvent()
 }

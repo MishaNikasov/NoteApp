@@ -80,6 +80,6 @@ fun NoteScreenTopBar(
 @Composable
 fun NoteEditTopBarPreview() {
     NoteAppTheme {
-        NoteScreenTopBar({},{})
+        NoteScreenTopBar({}, {})
     }
 }

@@ -1,17 +1,18 @@
 package com.app.noteapp.view.screen.auth
 
 import android.app.Activity
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import com.app.noteapp.navigation.Router
-import com.app.noteapp.view.screen.auth.view.AuthScreenContent
 import com.app.noteapp.common.FirebaseAuthManager
+import com.app.noteapp.navigation.Router
 import com.app.noteapp.view.screen.auth.model.AuthScreenEvent
-import com.app.noteapp.view.screen.auth.model.AuthViewState
+import com.app.noteapp.view.screen.auth.view.AuthScreenContent
+import com.app.util.ViewState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 @Composable
@@ -20,7 +21,7 @@ fun AuthScreen(
     authViewModel: AuthViewModel
 ) {
 
-    val authViewState = authViewModel.authViewState.collectAsState()
+    val result by authViewModel.authViewState.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -38,12 +39,8 @@ fun AuthScreen(
         }
     )
 
-    Log.d("AuthScreen", "AuthScreen: ${authViewState.value}")
-
-    when(authViewState.value) {
-        AuthViewState.Error -> {}
-        AuthViewState.Loading -> {}
-        AuthViewState.Default -> {
+    when (result) {
+        is ViewState.Empty -> {
             val client = FirebaseAuthManager.getClient(LocalContext.current as Activity)
             AuthScreenContent(
                 onSignInClick = {
@@ -51,11 +48,8 @@ fun AuthScreen(
                 }
             )
         }
-        is AuthViewState.AuthSuccesses -> {
-            LaunchedEffect(true) {
-                router.openHome()
-            }
-        }
+        is ViewState.Successes -> LaunchedEffect(true) { router.openHome() }
+        else -> {}
     }
 
 }
